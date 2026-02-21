@@ -192,8 +192,8 @@ def sayfa_ayarlar():
         for i, k in enumerate(fiyatlar):
             c1,c2,c3,c4 = st.columns([3,1,2,1])
             ad_k  = c1.text_input("", value=k["kalem"],  key=f"kad_{i}",  label_visibility="collapsed")
-            birim = c2.selectbox("", ["m²","adet","mt","set"],
-                       index=["m²","adet","mt","set"].index(k.get("birim","m²")),
+            birim = c2.selectbox("", ["m²","adet","mt","set","gün"],
+                       index=["m²","adet","mt","set","gün"].index(k.get("birim","m²")),
                        key=f"kbr_{i}", label_visibility="collapsed")
             fiyat = c3.number_input("", value=float(k["fiyat"]), min_value=0.0,
                        step=5.0, key=f"kfiy_{i}", label_visibility="collapsed")
@@ -206,7 +206,7 @@ def sayfa_ayarlar():
         st.write("**Yeni Kalem Ekle**")
         n1,n2,n3,n4 = st.columns([3,1,2,1])
         yk_ad    = n1.text_input("Kalem Adı",  key="yk_ad")
-        yk_birim = n2.selectbox("Birim", ["m²","adet","mt","set"], key="yk_birim")
+        yk_birim = n2.selectbox("Birim", ["m²","adet","mt","set","gün"], key="yk_birim")
         yk_fiyat = n3.number_input("Fiyat", min_value=0.0, step=5.0, key="yk_fiyat")
         with n4:
             st.write(""); st.write("")

@@ -39,56 +39,55 @@ if "teklif_adim" not in st.session_state:
     st.session_state.teklif_adim = 1
 if "birim_fiyatlar" not in st.session_state:
     st.session_state.birim_fiyatlar = [
-        # 1. Kırım ve Hazırlık
-        {"kalem": "Kırım işleri",                          "birim": "gün",  "fiyat": 0},
-        {"kalem": "Moloz atımı",                           "birim": "adet", "fiyat": 0},
-        {"kalem": "Self-leveling akıllı şap",              "birim": "m²",   "fiyat": 0},
-        # 2. Seramik ve Zemin Kaplama
-        {"kalem": "Seramik zemin kaplaması (A tipi)",      "birim": "m²",   "fiyat": 0},
-        {"kalem": "Seramik zemin kaplaması (B tipi)",      "birim": "m²",   "fiyat": 0},
-        {"kalem": "Seramik duvar kaplaması",               "birim": "m²",   "fiyat": 0},
-        {"kalem": "Laminat parke kaplaması",               "birim": "m²",   "fiyat": 0},
-        {"kalem": "Süpürgelik (lake, yüksek)",             "birim": "mt",   "fiyat": 0},
-        # 3. Duvar ve Tavan
-        {"kalem": "Alçıpan duvar imalatı",                 "birim": "m²",   "fiyat": 0},
-        {"kalem": "Asma tavan / alçıpan havuz",            "birim": "m²",   "fiyat": 0},
-        {"kalem": "Kartonpiyer / stropiyer",               "birim": "mt",   "fiyat": 0},
-        # 4. Boya
-        {"kalem": "İç cephe boyası",                       "birim": "m²",   "fiyat": 0},
-        {"kalem": "Duvar kağıdı kaplaması",                "birim": "m²",   "fiyat": 0},
-        # 5. Mutfak
-        {"kalem": "Mutfak dolapları",                      "birim": "mt",   "fiyat": 0},
-        {"kalem": "Mutfak tezgahı (taban)",                "birim": "mt",   "fiyat": 0},
-        {"kalem": "Mutfak tezgahı (duvar)",                "birim": "mt",   "fiyat": 0},
-        {"kalem": "Mutfak evyesi",                         "birim": "adet", "fiyat": 0},
-        {"kalem": "Mutfak lavabo bataryası",               "birim": "adet", "fiyat": 0},
-        # 6. Banyo
-        {"kalem": "Gömme rezervuar ve kapağı",             "birim": "adet", "fiyat": 0},
-        {"kalem": "Asma klozet ve kapağı",                 "birim": "adet", "fiyat": 0},
-        {"kalem": "Duş teknesi 90x90",                     "birim": "adet", "fiyat": 0},
-        {"kalem": "Duşakabin 90x90",                       "birim": "adet", "fiyat": 0},
-        {"kalem": "Duş bataryası ve duş başlığı",          "birim": "adet", "fiyat": 0},
-        {"kalem": "Banyo dolabı",                          "birim": "adet", "fiyat": 0},
-        {"kalem": "Lavabo bataryası",                      "birim": "adet", "fiyat": 0},
-        {"kalem": "Ankastre taharet musluğu",              "birim": "adet", "fiyat": 0},
-        {"kalem": "Aksesuarlar (havluluk, kagitlik)",      "birim": "adet", "fiyat": 0},
-        {"kalem": "Tesisat boruları",                      "birim": "adet", "fiyat": 0},
-        {"kalem": "Tesisat ve montaj işçiliği",            "birim": "adet", "fiyat": 0},
-        # 7. Elektrik ve Aydınlatma
-        {"kalem": "Elektrik kablo yenileme",               "birim": "m²",   "fiyat": 0},
-        {"kalem": "Sigorta panosu ve şalterler",           "birim": "adet", "fiyat": 0},
-        {"kalem": "Anahtar ve priz grubu",                 "birim": "adet", "fiyat": 0},
-        {"kalem": "Aydınlatma armatürü montajı",           "birim": "adet", "fiyat": 0},
-        {"kalem": "Internet/Data hattı (CAT6)",            "birim": "mt",   "fiyat": 0},
-        # 8. Isınma ve İklimlendirme
-        {"kalem": "Radyatör yenileme",                     "birim": "adet", "fiyat": 0},
-        {"kalem": "Kombi / kazan montajı",                 "birim": "adet", "fiyat": 0},
-        {"kalem": "Klima altyapısı (bakır boru)",          "birim": "mt",   "fiyat": 0},
-        # 9. Kapı ve Güvenlik
-        {"kalem": "Ahşap oda kapısı",                      "birim": "adet", "fiyat": 0},
-        {"kalem": "Çelik kapı (giriş)",                    "birim": "adet", "fiyat": 0},
-        {"kalem": "Kapı kolu ve kilit sistemi",            "birim": "adet", "fiyat": 0},
-        {"kalem": "PVC pencere (çift cam)",                "birim": "m²",   "fiyat": 0},
+        # Kırım ve Hazırlık
+        {"kalem": "Kırım işleri",                          "birim": "gün",  "fiyat": 4500},
+        {"kalem": "Moloz atımı",                           "birim": "adet", "fiyat": 5000},
+        {"kalem": "Self-leveling akıllı şap",              "birim": "m²",   "fiyat": 280},
+        # Seramik ve Zemin
+        {"kalem": "Seramik zemin kaplaması (A tipi)",      "birim": "m²",   "fiyat": 850},
+        {"kalem": "Seramik zemin kaplaması (B tipi)",      "birim": "m²",   "fiyat": 1250},
+        {"kalem": "Seramik duvar kaplaması",               "birim": "m²",   "fiyat": 950},
+        {"kalem": "Laminat parke kaplaması",               "birim": "m²",   "fiyat": 400},
+        {"kalem": "Süpürgelik (lake, yüksek)",             "birim": "mt",   "fiyat": 150},
+        # Duvar ve Tavan
+        {"kalem": "Alçıpan duvar imalatı",                 "birim": "m²",   "fiyat": 750},
+        {"kalem": "Asma tavan / alçıpan havuz",            "birim": "m²",   "fiyat": 800},
+        {"kalem": "Kartonpiyer / stropiyer",               "birim": "mt",   "fiyat": 200},
+        # Boya
+        {"kalem": "İç cephe boyası",                       "birim": "m²",   "fiyat": 180},
+        {"kalem": "Duvar kağıdı kaplaması",                "birim": "m²",   "fiyat": 350},
+        # Mutfak
+        {"kalem": "Mutfak dolapları",                      "birim": "mt",   "fiyat": 12000},
+        {"kalem": "Mutfak tezgahı (taban)",                "birim": "mt",   "fiyat": 9000},
+        {"kalem": "Mutfak tezgahı (duvar)",                "birim": "mt",   "fiyat": 8000},
+        {"kalem": "Mutfak evyesi",                         "birim": "adet", "fiyat": 4500},
+        {"kalem": "Mutfak lavabo bataryası",               "birim": "adet", "fiyat": 3500},
+        # Banyo
+        {"kalem": "Asma klozet ve kapağı",                 "birim": "adet", "fiyat": 4000},
+        {"kalem": "Gömme rezervuar ve kapağı",             "birim": "adet", "fiyat": 3000},
+        {"kalem": "Duş teknesi 90x90",                     "birim": "adet", "fiyat": 3000},
+        {"kalem": "Duşakabin 90x90",                       "birim": "adet", "fiyat": 2500},
+        {"kalem": "Duş bataryası ve duş başlığı",          "birim": "adet", "fiyat": 2500},
+        {"kalem": "Banyo dolabı",                          "birim": "adet", "fiyat": 8000},
+        {"kalem": "Lavabo bataryası",                      "birim": "adet", "fiyat": 1500},
+        {"kalem": "Aksesuarlar (havluluk, kagitlik)",      "birim": "adet", "fiyat": 2000},
+        {"kalem": "Tesisat boruları",                      "birim": "adet", "fiyat": 6000},
+        {"kalem": "Tesisat ve montaj işçiliği",            "birim": "adet", "fiyat": 25000},
+        # Elektrik
+        {"kalem": "Elektrik kablo yenileme",               "birim": "m²",   "fiyat": 250},
+        {"kalem": "Sigorta panosu ve şalterler",           "birim": "adet", "fiyat": 8000},
+        {"kalem": "Anahtar ve priz grubu",                 "birim": "adet", "fiyat": 350},
+        {"kalem": "Aydınlatma armatürü montajı",           "birim": "adet", "fiyat": 500},
+        {"kalem": "Internet/Data hattı (CAT6)",            "birim": "mt",   "fiyat": 120},
+        # Isınma
+        {"kalem": "Radyatör yenileme",                     "birim": "adet", "fiyat": 3500},
+        {"kalem": "Kombi / kazan montajı",                 "birim": "adet", "fiyat": 15000},
+        {"kalem": "Klima altyapısı (bakır boru)",          "birim": "mt",   "fiyat": 400},
+        # Kapı ve Güvenlik
+        {"kalem": "Ahşap oda kapısı",                      "birim": "adet", "fiyat": 6500},
+        {"kalem": "Çelik kapı (giriş)",                    "birim": "adet", "fiyat": 12000},
+        {"kalem": "Kapı kolu ve kilit sistemi",            "birim": "adet", "fiyat": 1200},
+        {"kalem": "PVC pencere (çift cam)",                "birim": "m²",   "fiyat": 2500},
     ]
 if "odeme_planlari" not in st.session_state:
     st.session_state.odeme_planlari = [

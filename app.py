@@ -1,5 +1,5 @@
 import streamlit as st
-import anthropic
+from openai import OpenAI
 import json
 import uuid
 import urllib.parse
@@ -15,9 +15,9 @@ except ImportError:
 
 def get_api_key():
     try:
-        return st.secrets["ANTHROPIC_API_KEY"]
+        return st.secrets["OPENAI_API_KEY"]
     except:
-        return os.getenv("ANTHROPIC_API_KEY", "")
+        return os.getenv("OPENAI_API_KEY", "")
 
 st.set_page_config(
     page_title="TeklifAI — Tadilat Teklif Asistanı",
@@ -172,16 +172,37 @@ def sayfa_ayarlar():
         sehirler = ["İstanbul","Ankara","İzmir","Bursa","Antalya","Adana","Konya","Diğer"]
         sehir    = st.selectbox("Şehir", sehirler,
                      index=sehirler.index(firma.get("sehir","İstanbul")))
+
+        st.markdown("**Firma Logosu**")
+        if firma.get("logo"):
+            st.image(firma["logo"], width=180)
+            if st.button("🗑️ Logoyu Kaldır", key="logo_sil"):
+                fp = st.session_state.firma_profili or {}
+                fp["logo"] = None
+                st.session_state.firma_profili = fp
+                st.rerun()
+        logo_file = st.file_uploader("Logo yükle (PNG veya JPG)", type=["png","jpg","jpeg"], key="logo_yukle")
+        if logo_file:
+            import base64
+            logo_b64 = base64.b64encode(logo_file.read()).decode()
+            logo_data = f"data:{logo_file.type};base64,{logo_b64}"
+            st.session_state._logo_temp = logo_data
+            st.image(logo_data, width=180, caption="Önizleme")
+
         if st.button("💾 Kaydet", type="primary", key="firma_kaydet"):
             if not ad:
                 st.error("Firma adı zorunlu.")
             else:
+                logo_val = getattr(st.session_state, "_logo_temp", firma.get("logo"))
                 st.session_state.firma_profili = {
                     **(st.session_state.firma_profili or {}),
                     "ad": ad, "yetkili": yetkili,
                     "telefon": telefon, "sehir": sehir,
-                    "zorluk_carpani": 20
+                    "zorluk_carpani": 20,
+                    "logo": logo_val
                 }
+                if hasattr(st.session_state, "_logo_temp"):
+                    del st.session_state._logo_temp
                 st.success("✅ Kaydedildi!")
 
     with tab2:
@@ -405,7 +426,7 @@ def sayfa_yeni_teklif():
 KALITE_CARPANI = {"Ekonomik": 0.85, "Orta": 1.0, "Premium": 1.35}
 
 def ai_kalem_olustur(teklif, birim_fiyatlar):
-    client = anthropic.Anthropic(api_key=get_api_key())
+    client = OpenAI(api_key=get_api_key())
     proje   = ", ".join(teklif.get("proje_turu",[]))
     alan    = teklif.get("alan", 60)
     durum   = teklif.get("mekan_durum","Orta")
@@ -438,12 +459,12 @@ SADECE JSON döndür, başka hiçbir şey yazma:
   {{"kalem":"...", "miktar":25, "birim":"m²", "birim_fiyat":130, "ai_not":"12m² taban → 25m² duvar tahmini"}}
 ]"""
 
-    msg = client.messages.create(
-        model="claude-opus-4-6",
+    msg = client.chat.completions.create(
+        model="gpt-4o",
         max_tokens=2000,
         messages=[{"role":"user","content":prompt}]
     )
-    text = msg.content[0].text.strip()
+    text = msg.choices[0].message.content.strip()
     if "```" in text:
         text = text.split("```")[1]
         if text.startswith("json"): text = text[4:]
@@ -592,10 +613,39 @@ def pdf_olustur(teklif, firma):
     def stil(name, parent="Normal", **kw):
         return ParagraphStyle(name, parent=styles[parent], fontName=NORMAL_FONT, **kw)
 
-    elems.append(Paragraph(firma.get("ad","Firma"), stil("b",fontSize=20,textColor=MAVI,spaceAfter=4)))
-    elems.append(Paragraph(
-        f"{firma.get('yetkili','')} | {firma.get('telefon','')} | {firma.get('sehir','')}",
-        stil("s",fontSize=10,textColor=GRI)))
+    # Logo + firma adı yan yana
+    from reportlab.platypus import Image as RLImage
+    import base64, tempfile
+    header_content = []
+    logo_data = firma.get("logo")
+    if logo_data and "base64," in logo_data:
+        try:
+            b64 = logo_data.split("base64,")[1]
+            img_bytes = base64.b64decode(b64)
+            tmp = tempfile.NamedTemporaryFile(delete=False, suffix=".png")
+            tmp.write(img_bytes); tmp.close()
+            logo_img = RLImage(tmp.name, width=3*cm, height=2*cm)
+            firma_text = [
+                Paragraph(firma.get("ad","Firma"), stil("b",fontSize=18,textColor=MAVI,spaceAfter=2)),
+                Paragraph(f"{firma.get('yetkili','')} | {firma.get('telefon','')} | {firma.get('sehir','')}",
+                          stil("s",fontSize=9,textColor=GRI))
+            ]
+            from reportlab.platypus import KeepInFrame
+            logo_table = Table([[logo_img, firma_text]], colWidths=[3.5*cm, 14*cm])
+            logo_table.setStyle(TableStyle([
+                ("VALIGN",(0,0),(-1,-1),"MIDDLE"),
+                ("LEFTPADDING",(0,0),(-1,-1),0),
+                ("RIGHTPADDING",(0,0),(-1,-1),8),
+            ]))
+            elems.append(logo_table)
+        except:
+            elems.append(Paragraph(firma.get("ad","Firma"), stil("b",fontSize=20,textColor=MAVI,spaceAfter=4)))
+            elems.append(Paragraph(f"{firma.get('yetkili','')} | {firma.get('telefon','')} | {firma.get('sehir','')}",
+                         stil("s",fontSize=10,textColor=GRI)))
+    else:
+        elems.append(Paragraph(firma.get("ad","Firma"), stil("b",fontSize=20,textColor=MAVI,spaceAfter=4)))
+        elems.append(Paragraph(f"{firma.get('yetkili','')} | {firma.get('telefon','')} | {firma.get('sehir','')}",
+                     stil("s",fontSize=10,textColor=GRI)))
     elems.append(HRFlowable(width="100%",thickness=2,color=MAVI,spaceAfter=12))
 
     tarih     = datetime.now().strftime("%d.%m.%Y")

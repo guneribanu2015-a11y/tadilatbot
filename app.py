@@ -47,14 +47,14 @@ if "birim_fiyatlar" not in st.session_state:
         {"kalem": "Seramik zemin kaplaması (A tipi)",      "birim": "m²",    "fiyat": 850},
         {"kalem": "Seramik zemin kaplaması (B tipi)",      "birim": "m²",    "fiyat": 1250},
         {"kalem": "Seramik duvar kaplaması",               "birim": "m²",    "fiyat": 950},
-        {"kalem": "Laminat parke kaplaması",               "birim": "m²",    "fiyat": 400},
+        {"kalem": "Laminat parke kaplaması",               "birim": "m²",    "fiyat": 600},
         {"kalem": "Süpürgelik (lake, yüksek)",             "birim": "mt",    "fiyat": 150},
         # Duvar ve Tavan
         {"kalem": "Alçıpan duvar imalatı",                 "birim": "m²",    "fiyat": 750},
         {"kalem": "Asma tavan / alçıpan havuz",            "birim": "m²",    "fiyat": 800},
         {"kalem": "Kartonpiyer / stropiyer",               "birim": "mt",    "fiyat": 200},
         # Boya
-        {"kalem": "İç cephe boyası",                       "birim": "m²",    "fiyat": 180},
+        {"kalem": "İç cephe boyası",                       "birim": "m²",    "fiyat": 320},
         {"kalem": "Duvar kağıdı kaplaması",                "birim": "m²",    "fiyat": 350},
         # Mutfak
         {"kalem": "Mutfak dolapları",                      "birim": "mt",    "fiyat": 12000},

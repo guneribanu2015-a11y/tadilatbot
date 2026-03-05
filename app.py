@@ -40,54 +40,54 @@ if "teklif_adim" not in st.session_state:
 if "birim_fiyatlar" not in st.session_state:
     st.session_state.birim_fiyatlar = [
         # Kırım ve Hazırlık
-        {"kalem": "Kırım işleri",                          "birim": "gün",  "fiyat": 4500},
-        {"kalem": "Moloz atımı",                           "birim": "adet", "fiyat": 5000},
-        {"kalem": "Self-leveling akıllı şap",              "birim": "m²",   "fiyat": 280},
+        {"kalem": "Kırım işleri",                          "birim": "gün",   "fiyat": 4500},
+        {"kalem": "Moloz atımı",                           "birim": "sefer", "fiyat": 5000},
+        {"kalem": "Self-leveling akıllı şap",              "birim": "m²",    "fiyat": 280},
         # Seramik ve Zemin
-        {"kalem": "Seramik zemin kaplaması (A tipi)",      "birim": "m²",   "fiyat": 850},
-        {"kalem": "Seramik zemin kaplaması (B tipi)",      "birim": "m²",   "fiyat": 1250},
-        {"kalem": "Seramik duvar kaplaması",               "birim": "m²",   "fiyat": 950},
-        {"kalem": "Laminat parke kaplaması",               "birim": "m²",   "fiyat": 400},
-        {"kalem": "Süpürgelik (lake, yüksek)",             "birim": "mt",   "fiyat": 150},
+        {"kalem": "Seramik zemin kaplaması (A tipi)",      "birim": "m²",    "fiyat": 850},
+        {"kalem": "Seramik zemin kaplaması (B tipi)",      "birim": "m²",    "fiyat": 1250},
+        {"kalem": "Seramik duvar kaplaması",               "birim": "m²",    "fiyat": 950},
+        {"kalem": "Laminat parke kaplaması",               "birim": "m²",    "fiyat": 400},
+        {"kalem": "Süpürgelik (lake, yüksek)",             "birim": "mt",    "fiyat": 150},
         # Duvar ve Tavan
-        {"kalem": "Alçıpan duvar imalatı",                 "birim": "m²",   "fiyat": 750},
-        {"kalem": "Asma tavan / alçıpan havuz",            "birim": "m²",   "fiyat": 800},
-        {"kalem": "Kartonpiyer / stropiyer",               "birim": "mt",   "fiyat": 200},
+        {"kalem": "Alçıpan duvar imalatı",                 "birim": "m²",    "fiyat": 750},
+        {"kalem": "Asma tavan / alçıpan havuz",            "birim": "m²",    "fiyat": 800},
+        {"kalem": "Kartonpiyer / stropiyer",               "birim": "mt",    "fiyat": 200},
         # Boya
-        {"kalem": "İç cephe boyası",                       "birim": "m²",   "fiyat": 180},
-        {"kalem": "Duvar kağıdı kaplaması",                "birim": "m²",   "fiyat": 350},
+        {"kalem": "İç cephe boyası",                       "birim": "m²",    "fiyat": 180},
+        {"kalem": "Duvar kağıdı kaplaması",                "birim": "m²",    "fiyat": 350},
         # Mutfak
-        {"kalem": "Mutfak dolapları",                      "birim": "mt",   "fiyat": 12000},
-        {"kalem": "Mutfak tezgahı (taban)",                "birim": "mt",   "fiyat": 9000},
-        {"kalem": "Mutfak tezgahı (duvar)",                "birim": "mt",   "fiyat": 8000},
-        {"kalem": "Mutfak evyesi",                         "birim": "adet", "fiyat": 4500},
-        {"kalem": "Mutfak lavabo bataryası",               "birim": "adet", "fiyat": 3500},
+        {"kalem": "Mutfak dolapları",                      "birim": "mt",    "fiyat": 12000},
+        {"kalem": "Mutfak tezgahı (taban)",                "birim": "mt",    "fiyat": 9000},
+        {"kalem": "Mutfak tezgahı (duvar)",                "birim": "mt",    "fiyat": 8000},
+        {"kalem": "Mutfak evyesi",                         "birim": "adet",  "fiyat": 4500},
+        {"kalem": "Mutfak lavabo bataryası",               "birim": "adet",  "fiyat": 3500},
         # Banyo
-        {"kalem": "Asma klozet ve kapağı",                 "birim": "adet", "fiyat": 4000},
-        {"kalem": "Gömme rezervuar ve kapağı",             "birim": "adet", "fiyat": 3000},
-        {"kalem": "Duş teknesi 90x90",                     "birim": "adet", "fiyat": 3000},
-        {"kalem": "Duşakabin 90x90",                       "birim": "adet", "fiyat": 2500},
-        {"kalem": "Duş bataryası ve duş başlığı",          "birim": "adet", "fiyat": 2500},
-        {"kalem": "Banyo dolabı",                          "birim": "adet", "fiyat": 8000},
-        {"kalem": "Lavabo bataryası",                      "birim": "adet", "fiyat": 1500},
-        {"kalem": "Aksesuarlar (havluluk, kagitlik)",      "birim": "adet", "fiyat": 2000},
-        {"kalem": "Tesisat boruları",                      "birim": "adet", "fiyat": 6000},
-        {"kalem": "Tesisat ve montaj işçiliği",            "birim": "adet", "fiyat": 25000},
+        {"kalem": "Asma klozet ve kapağı",                 "birim": "adet",  "fiyat": 4000},
+        {"kalem": "Gömme rezervuar ve kapağı",             "birim": "adet",  "fiyat": 3000},
+        {"kalem": "Duş teknesi 90x90",                     "birim": "adet",  "fiyat": 3000},
+        {"kalem": "Duşakabin 90x90",                       "birim": "adet",  "fiyat": 2500},
+        {"kalem": "Duş bataryası ve duş başlığı",          "birim": "adet",  "fiyat": 2500},
+        {"kalem": "Banyo dolabı",                          "birim": "adet",  "fiyat": 8000},
+        {"kalem": "Lavabo bataryası",                      "birim": "adet",  "fiyat": 1500},
+        {"kalem": "Aksesuarlar (havluluk, kagitlik)",      "birim": "set",   "fiyat": 2000},
+        {"kalem": "Tesisat boruları",                      "birim": "mt",    "fiyat": 400},
+        {"kalem": "Tesisat ve montaj işçiliği",            "birim": "adet",  "fiyat": 25000},
         # Elektrik
-        {"kalem": "Elektrik kablo yenileme",               "birim": "m²",   "fiyat": 250},
-        {"kalem": "Sigorta panosu ve şalterler",           "birim": "adet", "fiyat": 8000},
-        {"kalem": "Anahtar ve priz grubu",                 "birim": "adet", "fiyat": 350},
-        {"kalem": "Aydınlatma armatürü montajı",           "birim": "adet", "fiyat": 500},
-        {"kalem": "Internet/Data hattı (CAT6)",            "birim": "mt",   "fiyat": 120},
+        {"kalem": "Elektrik kablo yenileme",               "birim": "adet",  "fiyat": 250},
+        {"kalem": "Sigorta panosu ve şalterler",           "birim": "adet",  "fiyat": 8000},
+        {"kalem": "Anahtar ve priz grubu",                 "birim": "adet",  "fiyat": 350},
+        {"kalem": "Aydınlatma armatürü montajı",           "birim": "adet",  "fiyat": 500},
+        {"kalem": "Internet/Data hattı (CAT6)",            "birim": "mt",    "fiyat": 120},
         # Isınma
-        {"kalem": "Radyatör yenileme",                     "birim": "adet", "fiyat": 3500},
-        {"kalem": "Kombi / kazan montajı",                 "birim": "adet", "fiyat": 15000},
-        {"kalem": "Klima altyapısı (bakır boru)",          "birim": "mt",   "fiyat": 400},
+        {"kalem": "Radyatör yenileme",                     "birim": "adet",  "fiyat": 3500},
+        {"kalem": "Kombi / kazan montajı",                 "birim": "adet",  "fiyat": 15000},
+        {"kalem": "Klima altyapısı (bakır boru)",          "birim": "mt",    "fiyat": 400},
         # Kapı ve Güvenlik
-        {"kalem": "Ahşap oda kapısı",                      "birim": "adet", "fiyat": 6500},
-        {"kalem": "Çelik kapı (giriş)",                    "birim": "adet", "fiyat": 12000},
-        {"kalem": "Kapı kolu ve kilit sistemi",            "birim": "adet", "fiyat": 1200},
-        {"kalem": "PVC pencere (çift cam)",                "birim": "m²",   "fiyat": 2500},
+        {"kalem": "Ahşap oda kapısı",                      "birim": "adet",  "fiyat": 6500},
+        {"kalem": "Çelik kapı (giriş)",                    "birim": "adet",  "fiyat": 12000},
+        {"kalem": "Kapı kolu ve kilit sistemi",            "birim": "adet",  "fiyat": 1200},
+        {"kalem": "PVC pencere (çift cam)",                "birim": "m²",    "fiyat": 2500},
     ]
 if "odeme_planlari" not in st.session_state:
     st.session_state.odeme_planlari = [
@@ -191,8 +191,8 @@ def sayfa_ayarlar():
         for i, k in enumerate(fiyatlar):
             c1,c2,c3,c4 = st.columns([3,1,2,1])
             ad_k  = c1.text_input("", value=k["kalem"],  key=f"kad_{i}",  label_visibility="collapsed")
-            birim = c2.selectbox("", ["m²","adet","mt","set","gün"],
-                       index=["m²","adet","mt","set","gün"].index(k.get("birim","m²")),
+            birim = c2.selectbox("", ["m²","adet","mt","set","gün","sefer"],
+                       index=["m²","adet","mt","set","gün","sefer"].index(k.get("birim","m²")),
                        key=f"kbr_{i}", label_visibility="collapsed")
             fiyat = c3.number_input("", value=float(k["fiyat"]), min_value=0.0,
                        step=5.0, key=f"kfiy_{i}", label_visibility="collapsed")
@@ -205,7 +205,7 @@ def sayfa_ayarlar():
         st.write("**Yeni Kalem Ekle**")
         n1,n2,n3,n4 = st.columns([3,1,2,1])
         yk_ad    = n1.text_input("Kalem Adı",  key="yk_ad")
-        yk_birim = n2.selectbox("Birim", ["m²","adet","mt","set","gün"], key="yk_birim")
+        yk_birim = n2.selectbox("Birim", ["m²","adet","mt","set","gün","sefer"], key="yk_birim")
         yk_fiyat = n3.number_input("Fiyat", min_value=0.0, step=5.0, key="yk_fiyat")
         with n4:
             st.write(""); st.write("")

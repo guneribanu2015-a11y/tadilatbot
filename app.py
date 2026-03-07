@@ -6,7 +6,6 @@ import urllib.parse
 import os
 from datetime import datetime
 
-# API key: önce Streamlit secrets, sonra .env, sonra environment variable
 try:
     from dotenv import load_dotenv
     load_dotenv()
@@ -19,6 +18,107 @@ def get_api_key():
     except:
         return os.getenv("OPENAI_API_KEY", "")
 
+# ── Supabase ──────────────────────────────────────────────────────
+from supabase import create_client
+
+SUPABASE_URL = "https://kdyiromkfglxhesxfkxu.supabase.co"
+
+def get_supabase():
+    try:
+        key = st.secrets["SUPABASE_KEY"]
+    except:
+        key = os.getenv("SUPABASE_KEY", "")
+    return create_client(SUPABASE_URL, key)
+
+def db_firma_yukle():
+    try:
+        sb = get_supabase()
+        r = sb.table("firma_profili").select("*").limit(1).execute()
+        if r.data:
+            return r.data[0]
+    except:
+        pass
+    return None
+
+def db_firma_kaydet(firma):
+    try:
+        sb = get_supabase()
+        r = sb.table("firma_profili").select("id").limit(1).execute()
+        if r.data:
+            sb.table("firma_profili").update(firma).eq("id", r.data[0]["id"]).execute()
+        else:
+            sb.table("firma_profili").insert(firma).execute()
+    except Exception as e:
+        st.warning(f"Kayıt hatası: {e}")
+
+def db_fiyatlar_yukle():
+    try:
+        sb = get_supabase()
+        r = sb.table("birim_fiyatlar").select("*").order("sira").execute()
+        if r.data:
+            return [{"kalem": x["kalem"], "birim": x["birim"], "fiyat": x["fiyat"]} for x in r.data]
+    except:
+        pass
+    return None
+
+def db_fiyatlar_kaydet(fiyatlar):
+    try:
+        sb = get_supabase()
+        sb.table("birim_fiyatlar").delete().neq("id", "00000000-0000-0000-0000-000000000000").execute()
+        rows = [{"kalem": f["kalem"], "birim": f["birim"], "fiyat": f["fiyat"], "sira": i}
+                for i, f in enumerate(fiyatlar)]
+        sb.table("birim_fiyatlar").insert(rows).execute()
+    except Exception as e:
+        st.warning(f"Fiyat kayıt hatası: {e}")
+
+def db_teklifler_yukle():
+    try:
+        sb = get_supabase()
+        r = sb.table("teklifler").select("*").order("created_at", desc=True).execute()
+        if r.data:
+            teklifler = []
+            for x in r.data:
+                t = dict(x)
+                if isinstance(t.get("proje_turu"), str):
+                    try: t["proje_turu"] = json.loads(t["proje_turu"])
+                    except: t["proje_turu"] = [t["proje_turu"]]
+                teklifler.append(t)
+            return teklifler
+    except:
+        pass
+    return []
+
+def db_teklif_kaydet(teklif):
+    try:
+        sb = get_supabase()
+        row = {
+            "id": teklif.get("id", str(uuid.uuid4())[:8]),
+            "musteri_ad":    teklif.get("musteri_ad",""),
+            "musteri_tel":   teklif.get("musteri_tel",""),
+            "musteri_adres": teklif.get("musteri_adres",""),
+            "proje_turu":    json.dumps(teklif.get("proje_turu",[])),
+            "alan":          teklif.get("alan", 0),
+            "mekan_durum":   teklif.get("mekan_durum",""),
+            "bina_yasi":     teklif.get("bina_yasi",""),
+            "kalite":        teklif.get("kalite",""),
+            "sure":          teklif.get("sure",""),
+            "ozel_not":      teklif.get("ozel_not",""),
+            "odeme_plani":   json.dumps(teklif.get("odeme_plani",{})),
+            "kalemler":      json.dumps(teklif.get("kalemler",[])),
+            "toplam_tutar":  teklif.get("toplam_tutar", 0),
+            "durum":         teklif.get("durum","Taslak"),
+        }
+        sb.table("teklifler").upsert(row).execute()
+    except Exception as e:
+        st.warning(f"Teklif kayıt hatası: {e}")
+
+def db_teklif_durum_guncelle(teklif_id, durum):
+    try:
+        sb = get_supabase()
+        sb.table("teklifler").update({"durum": durum}).eq("id", teklif_id).execute()
+    except Exception as e:
+        st.warning(f"Durum güncelleme hatası: {e}")
+
 st.set_page_config(
     page_title="TeklifAI — Tadilat Teklif Asistanı",
     page_icon="🏗️",
@@ -28,17 +128,21 @@ st.set_page_config(
 
 # ── Session state başlat ──────────────────────────────────────────
 if "firma_profili" not in st.session_state:
-    st.session_state.firma_profili = None
+    st.session_state.firma_profili = db_firma_yukle()
 if "aktif_teklif" not in st.session_state:
     st.session_state.aktif_teklif = {}
 if "teklifler" not in st.session_state:
-    st.session_state.teklifler = []
+    st.session_state.teklifler = db_teklifler_yukle()
 if "sayfa" not in st.session_state:
     st.session_state.sayfa = "ana_sayfa"
 if "teklif_adim" not in st.session_state:
     st.session_state.teklif_adim = 1
 if "birim_fiyatlar" not in st.session_state:
-    st.session_state.birim_fiyatlar = [
+    _db_fiyatlar = db_fiyatlar_yukle()
+    if _db_fiyatlar:
+        st.session_state.birim_fiyatlar = _db_fiyatlar
+    else:
+        st.session_state.birim_fiyatlar = [
         # Kırım ve Hazırlık
         {"kalem": "Kırım işleri",                          "birim": "gün",   "fiyat": 4500},
         {"kalem": "Moloz atımı",                           "birim": "sefer", "fiyat": 5000},
@@ -194,13 +298,16 @@ def sayfa_ayarlar():
                 st.error("Firma adı zorunlu.")
             else:
                 logo_val = getattr(st.session_state, "_logo_temp", firma.get("logo"))
-                st.session_state.firma_profili = {
+                profil = {
                     **(st.session_state.firma_profili or {}),
                     "ad": ad, "yetkili": yetkili,
                     "telefon": telefon, "sehir": sehir,
                     "zorluk_carpani": 20,
                     "logo": logo_val
                 }
+                st.session_state.firma_profili = profil
+                db_kayit = {k:v for k,v in profil.items() if k != "id"}
+                db_firma_kaydet(db_kayit)
                 if hasattr(st.session_state, "_logo_temp"):
                     del st.session_state._logo_temp
                 st.success("✅ Kaydedildi!")
@@ -237,9 +344,7 @@ def sayfa_ayarlar():
                     st.rerun()
 
         if st.button("💾 Fiyat Listesini Kaydet", type="primary"):
-            fp = st.session_state.firma_profili or {}
-            fp["birim_fiyatlar"] = st.session_state.birim_fiyatlar
-            st.session_state.firma_profili = fp
+            db_fiyatlar_kaydet(st.session_state.birim_fiyatlar)
             st.success("✅ Kaydedildi!")
 
     with tab3:
@@ -616,7 +721,8 @@ def pdf_olustur(teklif, firma):
     # Logo + firma adı yan yana
     from reportlab.platypus import Image as RLImage
     import base64, tempfile
-    header_content = []
+    from PIL import Image as PILImage
+
     logo_data = firma.get("logo")
     if logo_data and "base64," in logo_data:
         try:
@@ -624,21 +730,36 @@ def pdf_olustur(teklif, firma):
             img_bytes = base64.b64decode(b64)
             tmp = tempfile.NamedTemporaryFile(delete=False, suffix=".png")
             tmp.write(img_bytes); tmp.close()
-            logo_img = RLImage(tmp.name, width=3*cm, height=2*cm)
-            firma_text = [
-                Paragraph(firma.get("ad","Firma"), stil("b",fontSize=18,textColor=MAVI,spaceAfter=2)),
-                Paragraph(f"{firma.get('yetkili','')} | {firma.get('telefon','')} | {firma.get('sehir','')}",
-                          stil("s",fontSize=9,textColor=GRI))
-            ]
-            from reportlab.platypus import KeepInFrame
-            logo_table = Table([[logo_img, firma_text]], colWidths=[3.5*cm, 14*cm])
+
+            # Orijinal boyut al, max 2cm yükseklik ile orantılı ölçekle
+            pil_img = PILImage.open(tmp.name)
+            orig_w, orig_h = pil_img.size
+            max_h = 1.6 * cm
+            max_w = 3.5 * cm
+            ratio = min(max_w / orig_w, max_h / orig_h)
+            logo_w = orig_w * ratio
+            logo_h = orig_h * ratio
+
+            logo_img = RLImage(tmp.name, width=logo_w, height=logo_h)
+            ad_text  = Paragraph(firma.get("ad","Firma"), stil("b", fontSize=18, textColor=MAVI, spaceAfter=2))
+            alt_text = Paragraph(
+                f"{firma.get('yetkili','')} | {firma.get('telefon','')} | {firma.get('sehir','')}",
+                stil("s", fontSize=9, textColor=GRI))
+
+            logo_table = Table(
+                [[logo_img, [ad_text, alt_text]]],
+                colWidths=[4*cm, 13.5*cm]
+            )
             logo_table.setStyle(TableStyle([
-                ("VALIGN",(0,0),(-1,-1),"MIDDLE"),
-                ("LEFTPADDING",(0,0),(-1,-1),0),
-                ("RIGHTPADDING",(0,0),(-1,-1),8),
+                ("VALIGN",   (0,0), (-1,-1), "MIDDLE"),
+                ("LEFTPADDING",  (0,0), (0,-1), 0),
+                ("RIGHTPADDING", (0,0), (0,-1), 12),
+                ("LEFTPADDING",  (1,0), (1,-1), 0),
+                ("TOPPADDING",   (0,0), (-1,-1), 0),
+                ("BOTTOMPADDING",(0,0), (-1,-1), 0),
             ]))
             elems.append(logo_table)
-        except:
+        except Exception as e:
             elems.append(Paragraph(firma.get("ad","Firma"), stil("b",fontSize=20,textColor=MAVI,spaceAfter=4)))
             elems.append(Paragraph(f"{firma.get('yetkili','')} | {firma.get('telefon','')} | {firma.get('sehir','')}",
                          stil("s",fontSize=10,textColor=GRI)))

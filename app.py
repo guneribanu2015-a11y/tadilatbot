@@ -914,8 +914,8 @@ def sayfa_onizleme():
                         st.session_state.teklifler[i] = teklif.copy()
                         break
             db_teklif_kaydet(teklif)
-            st.success("✅ Kaydedildi!")
-            st.session_state.sayfa = "teklifler"; st.rerun()
+            st.success("✅ Teklif kaydedildi! PDF'i indirdikten sonra Tekliflerime geçebilirsin.")
+            st.session_state.aktif_teklif = teklif
 
 # ══════════════════════════════════════════════════════════════════
 # SAYFA: TEKLİFLER
@@ -960,17 +960,31 @@ def sayfa_teklifler():
             yeni_durum = st.selectbox("Durum", DURUMLAR,
                            index=DURUMLAR.index(durum), key=f"ds_{i}")
             if yeni_durum != durum:
-                st.session_state.teklifler[gercek_i]["durum"] = yeni_durum; st.rerun()
+                st.session_state.teklifler[gercek_i]["durum"] = yeni_durum
+
+            # PDF butonu
+            firma = st.session_state.firma_profili or {}
+            try:
+                pdf_bytes = pdf_olustur(t, firma)
+                ad = t.get("musteri_ad","teklif").replace(" ","_")
+                st.download_button("⬇️ PDF İndir", pdf_bytes,
+                    file_name=f"teklif_{ad}_{t.get('tarih','').replace('.','')}.pdf",
+                    mime="application/pdf", use_container_width=True, key=f"pdf_{i}")
+            except Exception as e:
+                st.caption(f"PDF hatası: {e}")
 
             tel = t.get("musteri_tel","").replace(" ","").replace("-","")
             if tel:
-                firma = st.session_state.firma_profili or {}
                 msg   = (f"Merhaba {t.get('musteri_ad','')}, {firma.get('ad','Firmamız')} olarak "
                          f"hazırladığımız teklifiniz için iletişime geçiyoruz. "
                          f"Toplam tutar: {t.get('toplam_tutar',0):,.0f} TL, "
                          f"teslim süresi: {t.get('sure','-')} iş günü. İyi günler!")
                 wa = f"https://wa.me/90{tel.lstrip('0')}?text={urllib.parse.quote(msg)}"
                 st.link_button("📱 WhatsApp'tan Gönder", wa)
+
+            # Durum DB'ye kaydet
+            if yeni_durum != durum:
+                db_teklif_durum_guncelle(t.get("id"), yeni_durum)
 
 # ══════════════════════════════════════════════════════════════════
 # ROUTER

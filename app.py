@@ -908,9 +908,14 @@ def sayfa_onizleme():
                 teklif["tarih"] = datetime.now().strftime("%d.%m.%Y")
                 teklif["durum"] = "Taslak"
                 st.session_state.teklifler.append(teklif.copy())
+            else:
+                for i, t in enumerate(st.session_state.teklifler):
+                    if t.get("id") == teklif["id"]:
+                        st.session_state.teklifler[i] = teklif.copy()
+                        break
+            db_teklif_kaydet(teklif)
             st.success("✅ Kaydedildi!")
-            if st.button("📋 Tekliflerime Git"):
-                st.session_state.sayfa="teklifler"; st.rerun()
+            st.session_state.sayfa = "teklifler"; st.rerun()
 
 # ══════════════════════════════════════════════════════════════════
 # SAYFA: TEKLİFLER
